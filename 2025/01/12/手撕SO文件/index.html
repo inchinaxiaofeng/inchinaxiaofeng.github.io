@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="Marina&#39;s blog">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Marina&#39;s blog">
+    <meta name="keyword"  content="Marina,inchinaxiaofeng,CPU&amp;OS,ysyx,ArceOS">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        手撕SO文件 - AirCloud 日常
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Marina的所思所想" type="application/atom+xml">
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> Shall I compare thee to a summer&#39;s day? </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>Marina TOO</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E9%97%AE%E9%A2%98%E7%9A%84%E6%8F%90%E5%87%BA%E4%B8%8E%E6%80%BB%E7%9B%AE%E6%A0%87"><span class="toc-text">0. 问题的提出与总目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E6%A6%82%E5%BF%B5%E7%9A%84%E7%AE%80%E5%8D%95%E5%8C%BA%E5%88%86"><span class="toc-text">1. 静态链接与动态链接概念的简单区分</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E7%A0%81PIC%E7%9A%84%E5%8E%9F%E7%90%86%E3%80%81%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93%E3%80%81%E4%BB%A3%E7%A0%81%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="toc-text">2. 位置无关码PIC的原理、动态链接库、代码重定位</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E7%9A%84%E7%BC%96%E8%AF%91%E5%99%A8%E9%80%89%E9%A1%B9"><span class="toc-text">1. 位置无关的编译器选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8A%A0%E8%BD%BD%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E5%BA%93"><span class="toc-text">2. 加载动态链接库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="toc-text">2.1. 问题引入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%8A%A0%E8%BD%BD%E6%97%B6%E9%87%8D%E5%AE%9A%E4%BD%8D%EF%BC%88Load-time-relocation%EF%BC%89"><span class="toc-text">2.2. 加载时重定位（Load-time relocation）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BD%8D%E7%BD%AE%E6%97%A0%E5%85%B3%E4%BB%A3%E7%A0%81%EF%BC%88Position-Independent-Code%EF%BC%89"><span class="toc-text">3. 位置无关代码（Position Independent Code）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%BB%A3%E7%A0%81%E6%AE%B5%E5%92%8C%E6%95%B0%E6%8D%AE%E6%AE%B5%E4%B9%8B%E9%97%B4%E7%9A%84%E5%81%8F%E7%A7%BB"><span class="toc-text">3.1.  代码段和数据段之间的偏移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%85%A8%E5%B1%80%E5%81%8F%E7%A7%BB%E8%A1%A8%EF%BC%88Global-Offset-Table%EF%BC%89"><span class="toc-text">3.2. 全局偏移表（Global Offset Table）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E5%87%BD%E6%95%B0%E7%9A%84%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="toc-text">3.3. 函数的重定位</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93"><span class="toc-text">4. 总结</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> Shall I compare thee to a summer&#39;s day? </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        手撕SO文件
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2025-01-12 12:23:42</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#ArceOS开发日记" title="ArceOS开发日记">ArceOS开发日记</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#动态加载" title="动态加载">动态加载</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content no-indent">
+        <h1 id="0-问题的提出与总目标"><a href="#0-问题的提出与总目标" class="headerlink" title="0. 问题的提出与总目标"></a>0. 问题的提出与总目标</h1><p>在为ArceOS实现动态加载的时候，同组的一个同学贡献了这样的思路：直接在Rust中实现对应的库，然后在load的过程中，将函数直接复制到rela指出的位置。我的思路是希望通过直接加载so文件，实现对动态链接的支持。</p>
+<h1 id="1-静态链接与动态链接概念的简单区分"><a href="#1-静态链接与动态链接概念的简单区分" class="headerlink" title="1. 静态链接与动态链接概念的简单区分"></a>1. 静态链接与动态链接概念的简单区分</h1><p>静态链接是将所有第三方库函数全部打包到了一个可执行文件中，其体积较大，加载简单，其使用的库常用名称是<code>*.a</code>，是通过<code>ar</code>构建的；<br>动态链接不链接库文件，而是在运行时去加载，体积小，实现复杂，其使用的库常用名称为<code>*.so</code>，通过<code>gcc</code>类编译器构建的。</p>
+<p>我们把编译后但是还未链接的二进制机器码文件称为目标文件（Object File），那些第三方库是其他人编译打包好的目标文件，这些库里面包含了一些函数，我们可以直接调用而不用自己动手写一遍。在编译构建自己的可执行文件时，使用静态链接的方式，其实就是将所需的静态库与目标文件打包到一起。最终的可执行文件除了有自己的程序外，还包含了这些第三方的静态库，可执行文件比较臃肿。</p>
+<p>动态链接不将所有的第三方库都打包到最终的可执行文件上，而是只记录用到了哪些动态链接库，在运行时才将那些第三方库装载（Load）进来。装载是指将磁盘上的程序和数据加载到内存上。</p>
+<blockquote>
+<p>注意的是，不同操作系统的动态链接库格式不同，linux的是共享目标文件（Shared Object）<code>.so</code>，windows的是动态链接库（Dynamic Link Library）<code>.dll</code></p>
+</blockquote>
+<h1 id="2-位置无关码PIC的原理、动态链接库、代码重定位"><a href="#2-位置无关码PIC的原理、动态链接库、代码重定位" class="headerlink" title="2. 位置无关码PIC的原理、动态链接库、代码重定位"></a>2. 位置无关码PIC的原理、动态链接库、代码重定位</h1><p>问题：动态链接库在编译时并未确定其在内存中的具体位置，而是在运行时加载，因此必须进行加载时重定位。</p>
+<p>NOTE!: 本节参考文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/tilblackout/article/details/135585340">https://blog.csdn.net/tilblackout/article/details/135585340</a></p>
+<h2 id="1-位置无关的编译器选项"><a href="#1-位置无关的编译器选项" class="headerlink" title="1. 位置无关的编译器选项"></a>1. 位置无关的编译器选项</h2><p>这四个编译选项与位置无关代码(Position Independent Code，PIC)和位置无关可执行文件(Position Independent Executable，PIE)有关。它们的作用主要是为了提高代码的可重定位性，使得代码更适用于共享库和在内存中的不同位置加载的情况：</p>
+<ol>
+<li><code>-fPIC(Position Independent Code)</code><ul>
+<li><strong>作用：</strong>生成位置无关代码，适用于共享库。</li>
+<li><strong>用途：</strong>当编译共享库时，通常需要使用<code>-fPIC</code>，以确保库中代码可以在内存中的不同位置加载。</li>
+</ul>
+</li>
+<li><code>-fPIE(Position Independent Executable)</code><ul>
+<li><strong>作用：</strong> 生成位置无关的可执行文件，适用于可执行文件。</li>
+<li><strong>用途：</strong> 当编译可执行文件时，使用<code>-fPIE</code>会生成一个可以在内存中的不同位置加载的可执行文件。</li>
+</ul>
+</li>
+<li><code>-pie(Position Independent Executable)</code><ul>
+<li><strong>作用：</strong> 生成位置无关的可执行文件，与<code>-fPIE</code>类似。</li>
+<li><strong>用途：</strong> 在链接阶段，使用<code>-pie</code>可以生成位置无关的可执行文件，这也是为了提高安全性。与 <code>-fPIE</code> 不同的是，<code>-pie</code>在链接时指定，而不是在编译时。</li>
+</ul>
+</li>
+<li><code>-fno-pic</code><ul>
+<li><strong>作用：</strong> 禁用位置无关代码。</li>
+<li><strong>用途：</strong> 当不需要位置无关代码时，使用<code>-fno-pic</code>禁用，生成与地址相关的代码。</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-加载动态链接库"><a href="#2-加载动态链接库" class="headerlink" title="2. 加载动态链接库"></a>2. 加载动态链接库</h2><h3 id="2-1-问题引入"><a href="#2-1-问题引入" class="headerlink" title="2.1. 问题引入"></a>2.1. 问题引入</h3><p>构建动态链接库的时候，链接器事先无法知道任何给定共享库将在进程的虚拟内存中的哪个位置加载。这个问题的解决方法视操作系统不同而不同，这里以Linux为例来讲解一个实现的思路。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> test = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> a)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    test += a;</span><br><span class="line">    <span class="keyword">return</span> test;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码编译成动态链接库后，涉及到用<code>mov</code>指令将全局变量<code>test</code>的值从内存的位置取到寄存器中。但是<code>mov</code>指令需要<strong>绝对地址</strong>，而动态库是没有预定义的加载地址，所以这个地址将在运行时确定。</p>
+<p>LinuxELF共享库中，主要有两个解决这个问题的方法：加载时重定位和位置无关代码。</p>
+<h3 id="2-2-加载时重定位（Load-time-relocation）"><a href="#2-2-加载时重定位（Load-time-relocation）" class="headerlink" title="2.2. 加载时重定位（Load-time relocation）"></a>2.2. 加载时重定位（Load-time relocation）</h3><ul>
+<li><strong>实时性：</strong> 在加载时进行地址重定位，即在将共享库加载到进程的地址空间时，需要根据实际的加载地址对库中的数据和代码引用进行修正。这就是为什么称之为“加载时”重定位。</li>
+<li><strong>非位置无关：</strong> 共享库中的代码和数据引用是使用绝对地址的，因此必须在加载时将这些地址调整为实际的加载地址。</li>
+</ul>
+<p>存在的问题：</p>
+<ol>
+<li>性能问题<br> 当一个应用程序加载与加载时重定位条目关联的共享库时，尽管只需加载重定位的条目，但如果一个复杂的软件在启动时加载多个大型共享库，并且每个库都需要进行加载时重定位，会导致应用程序启动时间明显延迟。</li>
+<li>代码段无法共享<br> 共享库的初衷之一是为了节省RAM，使得一些常见的共享库能够被多个应用程序共享。这意味着对于每个应用程序，共享库都必须完全加载到内存中，导致相当大量的RAM浪费。</li>
+<li>要求代码段可写<br> 为了允许在加载时动态地修改其中的绝对地址，将其调整为实际的加载地址，加载时重定位要求代码段保持可写状态，这带来了潜在的代码安全风险。</li>
+</ol>
+<p>对于加载时重定位这种方法，实际上已经过时了，甚至最新的编译器已经不支持这种方法。PIC是目前常见的解决方案，接下来我们就深入讨论一下位置无关代码。</p>
+<h2 id="3-位置无关代码（Position-Independent-Code）"><a href="#3-位置无关代码（Position-Independent-Code）" class="headerlink" title="3. 位置无关代码（Position Independent Code）"></a>3. 位置无关代码（Position Independent Code）</h2><p>PIC的原理很简单：在代码中对所有全局数据和函数引用添加一个额外的中间层。通过巧妙地利用链接和加载过程中的结果，使共享库的代码部分实现位置无关。</p>
+<h3 id="3-1-代码段和数据段之间的偏移"><a href="#3-1-代码段和数据段之间的偏移" class="headerlink" title="3.1.  代码段和数据段之间的偏移"></a>3.1.  代码段和数据段之间的偏移</h3><p>PIC的一个关键点是利用链接时已知的代码段和数据段之间的偏移。当链接器合并多个目标文件时，它会整合它们的各个部分，形成一个大的代码段。因此，链接器了解各个部分的大小和它们的相对位置。</p>
+<p>举例来说，代码段可能直接跟在数据部分后面，这意味着从代码部分中的任意指令到数据段开头的偏移量等于代码部分的大小减去指令距离代码部分开头的偏移量。这两个量都是链接器已知的。</p>
+<p>当然，其实在代码段和数据段之间有别的段，或者两个段的位置关系不是如此，都不影响链接器<strong>知晓</strong>它们的位置，并了解到所有段的大小。</p>
+<h3 id="3-2-全局偏移表（Global-Offset-Table）"><a href="#3-2-全局偏移表（Global-Offset-Table）" class="headerlink" title="3.2. 全局偏移表（Global Offset Table）"></a>3.2. 全局偏移表（Global Offset Table）</h3><p>全局偏移表<code>GOT</code>可以帮我们实现位置无关数据寻址。实际上<code>GOT</code>就是一个地址表，存储在数据段中。假设代码段中的某个指令想要引用一个变量。<strong>它会引用<code>GOT</code>中的一个条目，而不是直接使用绝对地址引用(这将需要进行重定位)。</strong>由于<code>GOT</code>位于数据段的一个已知位置，这个引用是<strong>相对的</strong>，并且在链接器中是<strong>已知的</strong>，而<code>GOT</code>条目本身将包含变量的<strong>绝对地址</strong>。</p>
+<p>通过将变量引用重定向到GOT，我们避免了在代码段中直接使用绝对地址，而是通过GOT中的条目进行引用，从而减少了需要在加载时进行的具体地址修正。但是，我们在数据段中引入了一个新的重定位，因为全局偏移表仍然需要包含变量的绝对地址。那么，这样做的优点有哪些呢？</p>
+<ul>
+<li>加载时重定位需要对每个变量的引用都进行重定位，而在全局偏移表中，只需要对每个变量进行一次重定位</li>
+<li>数据段是可写的，并且在进程之间不共享</li>
+</ul>
+<p>实际上这就是解决前面提到的加载时重定位的三个缺点。</p>
+<p> ==这里我们需要重点关注的是==：<strong>Linux的动态链接器如何在运行时对全局偏移表进行修改</strong>。我们将通过了解这个内容，获得在ArceOS中直接加载SO文件的必要知识。</p>
+<h3 id="3-3-函数的重定位"><a href="#3-3-函数的重定位" class="headerlink" title="3.3. 函数的重定位"></a>3.3. 函数的重定位</h3><p>前面介绍的是全局变量的重定位，对于函数也需要重定位，它有着另一种机制：懒绑定。</p>
+<p>当共享库引用某个函数时，函数的真实地址在加载时未知。为了加速这个过程，引入了过程链接表(PLT)。PLT包含对函数进行间接调用的代码，而不是直接包含函数地址。在程序执行时，当函数首次调用时，PLT代码负责将函数的真实地址填充到全局偏移表(GOT)中的相应条目。此后的调用直接通过GOT访问函数地址，避免了每个函数调用时的绑定延迟。这种机制减少了不必要的解析工作，提高了程序执行效率。</p>
+<p>==这里我们可以知道==：存在某种方式，能够让我们在ArceOS中进行函数重定位。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>至此解释了什么是位置无关代码，以及它如何帮助创建具有可共享只读文本段的共享库。位置无关代码(PIC)通过引入全局偏移表(GOT)和过程链接表(PLT)实现，解决了共享库加载时的重定位问题。GOT提供了数据和函数的间接引用，PLT实现了懒绑定，推迟函数地址的解析。当然这也伴随额外的内存加载和寄存器使用成本，但在权衡之下，现代的编译器都更倾向于使用PIC。</p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/inchinaxiaofeng">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
