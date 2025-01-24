@@ -13,7 +13,7 @@
 
     <title>
         
-        ArceOS加载Linux应用的思路 - Marina的所思所想
+        ArceOS加载Linux应用的思路 - Marina的一人派对
         
     </title>
 
@@ -28,7 +28,7 @@
     <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
     <!-- ga & ba script hoook -->
     <script></script>
-<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Marina的所思所想" type="application/atom+xml">
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Marina的一人派对" type="application/atom+xml">
 </head>
 
 <body>
@@ -102,7 +102,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E9%97%AE%E9%A2%98%E7%9A%84%E5%87%BA%E7%8E%B0"><span class="toc-text">0. 问题的出现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%B8%A4%E5%A4%A7%E6%80%9D%E8%B7%AF"><span class="toc-text">1. 两大思路</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E9%97%AE%E9%A2%98%E7%9A%84%E5%87%BA%E7%8E%B0"><span class="toc-text">0. 问题的出现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-ArceOS%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="toc-text">1. ArceOS的不同</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E4%B8%A4%E7%A7%8D%E6%80%9D%E8%B7%AF"><span class="toc-text">2. 两种思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%80%9D%E8%B7%AF%E4%BA%8C%E7%9A%84%E6%94%AF%E6%8C%81%E7%8E%B0%E7%8A%B6%E5%92%8C%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">3. 思路二的支持现状和加载过程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-%E5%AE%8C%E6%95%B4%E6%94%AF%E6%8C%81%E7%9A%84%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="toc-text">3.1. 完整支持的头文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">3.2. 注意的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E8%AF%A6%E8%A7%A3"><span class="toc-text">3.3. 加载过程详解</span></a></li></ol></li></ol>
 </div>
     
 </div>
@@ -163,7 +163,49 @@
     <div class="post-content no-indent">
         <p>[TOC]</p>
 <h1 id="0-问题的出现"><a href="#0-问题的出现" class="headerlink" title="0. 问题的出现"></a>0. 问题的出现</h1><p>因为在ArceOS开发组实习中，我经手的项目是令ArceOS支持原生Linux应用，所以我对这些问题比较熟悉，在此写一篇文章来介绍这个过程。</p>
-<h1 id="1-两大思路"><a href="#1-两大思路" class="headerlink" title="1. 两大思路"></a>1. 两大思路</h1>
+<h1 id="1-ArceOS的不同"><a href="#1-ArceOS的不同" class="headerlink" title="1. ArceOS的不同"></a>1. ArceOS的不同</h1><p>ArceOS是一个Unikernel的操作系统，具体什么是Unikernel我不做过多阐释，仅仅列举与本问题相关的、与常规的Monokernel（Monolithic kernel）的几个不同：</p>
+<ul>
+<li>  Unikernel是没有内核态与用户态的区分，所有代码都运行在内核态中。</li>
+<li>  用户的代码和内核代码会被打包成一个可执行文件。</li>
+<li>  Monokernel中的“系统调用”在Unikernel中是以“函数调用”的形态体现的，这个往往也是其运行高效的一个原因。</li>
+<li>  Unikernel是没有Process（进程）的概念的，或者说它有且仅有一个Process。</li>
+<li>  Unikernel是可以有多个Thread的。</li>
+</ul>
+<p>笔者写下这个博客时，ArceOS的进度是希望直接加载动态链接的Linux应用，完成对Linux应用的支持，可以在不修改、不重新编译的情况下直接执行原生Linux应用。因此，石磊老师提出了两种思路。</p>
+<h1 id="2-两种思路"><a href="#2-两种思路" class="headerlink" title="2. 两种思路"></a>2. 两种思路</h1><p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/49f3055a02621dea4523bb6eec597afa.jpg" alt="49f3055a02621dea4523bb6eec597afa"></p>
+<p>第一种思路是通过在ArceOS内部创建中间层进行适配，第二种就是通过对动态库进行改造，对底层函数进行替换完成开发。</p>
+<p>第一种shi x na</p>
+<ul>
+<li>第一种方式：通过在ArceOS内部创建中间层进行适配<ul>
+<li>  这意味着绝大多数的代码将在ArceOS内部进行开发，通常意味着需要在这个中间层中实现所有的musl兼容库的代码开发。</li>
+<li>  这个不仅意味着ArceOS本身将会变得很大，不能实现库代码与系统代码的分离，同时也意味着我们在拓展更多版本的支持的时候需要直接修改代码本身。</li>
+<li>  优势就是我们不需要从PLASH中同时加载Lib和App，其加载的速度要快一些。</li>
+</ul>
+</li>
+<li>第二种思路：通过对musl库的考察，最小化替换其中仅能用于Linux而不是ArceOS的代码<ul>
+<li>  这个能够加速开发过程，并且简化测试过程，因为绝大多数代码都是使用的musl库的代码，仅仅xu yao dui</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-思路二的支持现状和加载过程详解"><a href="#3-思路二的支持现状和加载过程详解" class="headerlink" title="3. 思路二的支持现状和加载过程详解"></a>3. 思路二的支持现状和加载过程详解</h1><h2 id="3-1-完整支持的头文件"><a href="#3-1-完整支持的头文件" class="headerlink" title="3.1. 完整支持的头文件"></a>3.1. 完整支持的头文件</h2><ul>
+<li>  [x] endian.h</li>
+<li>  [x] stdbool.h</li>
+<li>  [x] stdint.h</li>
+<li>  [ ] features.h(融合了src/include/features.h)</li>
+<li>  [x] ctype.h</li>
+<li>  [x] float.h</li>
+<li>  [x] limits.h</li>
+<li>  [x] stdarg.h</li>
+<li>  [x] stdbool.h</li>
+<li>  [ ] stdlib.h</li>
+<li>  [ ] time.h</li>
+<li>  [x] math.h</li>
+<li>  [ ] string.h</li>
+<li>  [x] values.h</li>
+<li>  [x] stdc_predef.h</li>
+</ul>
+<h2 id="3-2-注意的问题"><a href="#3-2-注意的问题" class="headerlink" title="3.2. 注意的问题"></a>3.2. 注意的问题</h2><p>目前在某些函数部分使用了特殊的一个调用，在使用到不支持函数的时候会输出<code>Not implement yet.</code>并退出。这部分均是使用到<code>float 128</code>类型的。使用这个类型的时候，musl会去调用一个<code>compile_rt</code>库，并链接这里的函数。但是由于我使用<code>-nostdlib</code>参数去编译库，所以这部分的库不会被链接进去，我自己将这些函数实现了，具体的实现就是在内部调用一个NOIMPL并退出，作为占位符。</p>
+<h2 id="3-3-加载过程详解"><a href="#3-3-加载过程详解" class="headerlink" title="3.3. 加载过程详解"></a>3.3. 加载过程详解</h2>
         
         <br />
         <div id="comment-container">

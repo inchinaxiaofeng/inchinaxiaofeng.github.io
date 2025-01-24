@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="Marina&#39;s blog">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Marina&#39;s blog">
+    <meta name="keyword"  content="Marina,inchinaxiaofeng,CPU&amp;OS,ysyx,ArceOS">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        ArceOS的mocklibc开发手记 - Marina的一人派对
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Marina的一人派对" type="application/atom+xml">
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> Shall I compare thee to a summer&#39;s day? </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>Marina TOO</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E8%BF%99%E4%B8%AA%E6%96%87%E4%BB%B6%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7%E5%92%8C%E9%98%85%E8%AF%BB%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">0. 这个文件的必要性和阅读的注意事项</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-mocklibc%E5%BC%80%E5%8F%91%E6%89%8B%E8%AE%B0"><span class="toc-text">1. mocklibc开发手记</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ADD-sleep%E5%87%BD%E6%95%B0"><span class="toc-text">[ADD] sleep函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A2025-1-18-21-53%EF%BC%9B%E4%BF%AE%E6%94%B9%EF%BC%9A2025-1-18-22-09"><span class="toc-text">创建：2025_1_18_21:53；修改：2025_1_18_22:09</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXME-BUG-%E5%AE%9E%E7%8E%B0pthread"><span class="toc-text">[FIXME] BUG 实现pthread</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA19%E5%8F%B7%E4%B8%8A%E5%8D%88"><span class="toc-text">创建19号上午</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XXX-BUG-Math%E5%BA%93%E4%B8%AD%EF%BC%8C%E6%89%80%E6%9C%89%E5%B8%A6l%EF%BC%88long%EF%BC%89%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%93%8D%E4%BD%9C%E9%83%BD%E4%BC%9A%E8%A2%AB%E5%AF%BC%E5%90%91%E5%88%B0%E4%B8%80%E4%BA%9B%E5%A5%87%E6%80%AA%E7%9A%84%E7%AC%A6%E5%8F%B7%EF%BC%8C%E4%BE%8B%E5%A6%82-getf2"><span class="toc-text">[XXX] BUG Math库中，所有带l（long）类型的操作都会被导向到一些奇怪的符号，例如__getf2</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA19%E5%8F%B7%E4%B8%AD%E5%8D%88"><span class="toc-text">创建19号中午</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%AE%E6%94%B9%E6%96%B9%E5%BC%8F"><span class="toc-text">第一次修改方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%AE%E6%94%B9%E5%89%8D%E6%8A%A5%E9%94%99%EF%BC%9A"><span class="toc-text">第一次修改前报错：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E4%BF%AE%E6%94%B9%E5%90%8E%E6%8A%A5%E9%94%99%EF%BC%9A"><span class="toc-text">第一次修改后报错：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%A5%E9%97%AE%E9%A2%98%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8F%8F%E8%BF%B0%EF%BC%9A"><span class="toc-text">该问题的完整描述：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%80%83%EF%BC%9A%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E6%89%BE%E5%88%B0%E8%B6%B3%E5%A4%9F%E5%BA%95%E5%B1%82%E4%B8%94%E5%BC%80%E6%94%BE%E7%9A%84%E8%BE%93%E5%87%BA%E6%8E%A5%E5%8F%A3%EF%BC%8C%E5%8E%BB%E5%AE%8C%E6%88%90musl%E4%B8%AD%E7%9A%84%E8%BE%93%E5%87%BA%E5%BA%95%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%9B%BF%E6%8D%A2"><span class="toc-text">思考：是否可以找到足够底层且开放的输出接口，去完成musl中的输出底层接口的替换</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A1-20-9-06"><span class="toc-text">创建：1_20_9:06</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91errno%E4%BB%A5%E5%8F%8A-errno-location-%E5%87%BD%E6%95%B0"><span class="toc-text">开发errno以及__errno_location()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A2025-1-20-13-16"><span class="toc-text">创建：2025_1_20 13:16</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E8%A7%89%E5%BE%97%E5%BE%97%E5%81%9A%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%81%E7%A7%BB%E4%BA%86"><span class="toc-text">我觉得得做文件系统的迁移了</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A1-20-16-20"><span class="toc-text">创建：1_20 16:20</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXED-BUG%E4%BF%AE%E5%A4%8D%EF%BC%9A%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5%E7%BC%96%E8%AF%91%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E5%B0%A4%E5%85%B6%E6%98%AF%E5%BC%80%E4%BA%86%E6%B2%A1%E6%9C%89startfile%E7%9A%84%E9%82%A3%E4%B8%AA%E9%80%89%E9%A1%B9%E5%90%8E%EF%BC%8Centry%E5%8F%AF%E8%83%BD%E4%B8%8D%E6%98%AFmain%E5%87%BD%E6%95%B0"><span class="toc-text">[FIXED] BUG修复：动态链接编译的时候，尤其是开了没有startfile的那个选项后，entry可能不是main函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXED-BUG%E4%BF%AE%E5%A4%8D%EF%BC%9Algamma-r-c%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%9C%A8%E7%BC%96%E8%AF%91%E5%90%8E%E4%BC%9A%E5%87%BA%E7%8E%B0bgu%E6%8C%87%E4%BB%A4%EF%BC%8C%E5%AF%B9a5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%A9%BA%E9%97%B4%E5%86%99%EF%BC%8C%E4%BD%86%E6%98%AFa5%E5%B7%B2%E7%BB%8F%E6%88%900%E4%BA%86%EF%BC%8C%E7%9B%AE%E5%89%8D%E7%9C%8B%E4%B8%8D%E5%87%BA%E6%9C%89%E4%BB%80%E4%B9%88%E7%89%B9%E5%88%AB%E7%9A%84%E7%82%B9"><span class="toc-text">[FIXED] BUG修复：lgamma_r.c文件中的函数在编译后会出现bgu指令，对a5寄存器的空间写，但是a5已经成0了，目前看不出有什么特别的点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%97%B6%E9%97%B4%EF%BC%9A1-21-20%EF%BC%9A29"><span class="toc-text">创建时间：1_21 20：29</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%85%E8%AF%BB%E8%AE%A1%E5%88%92%EF%BC%9Ahttps-blog-csdn-net-tjcwt2011-article-details-106520862"><span class="toc-text">阅读计划：https:&#x2F;&#x2F;blog.csdn.net&#x2F;tjcwt2011&#x2F;article&#x2F;details&#x2F;106520862</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXED-%E8%B6%85%E9%95%BF%E6%9C%9F%E7%9A%84%E4%B8%80%E4%B8%AABUG"><span class="toc-text">[FIXED] 超长期的一个BUG</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A1-21-20-44-%E4%BF%AE%E6%94%B9%EF%BC%9A-1-24-11-32"><span class="toc-text">创建：1_21 20:44 修改： 1_24 11:32</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXED-%E5%85%B3%E4%BA%8E%E5%9C%A8%E9%83%A8%E5%88%86%E6%83%85%E5%86%B5%E4%B8%8B%E4%BD%BF%E7%94%A8debug%E5%8F%82%E6%95%B0%E5%92%8C%E5%85%B6%E4%BB%96%E5%8F%82%E6%95%B0%E7%BB%93%E6%9E%9C%E4%B8%8D%E4%B8%80%E8%87%B4%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">[FIXED] 关于在部分情况下使用debug参数和其他参数结果不一致的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A2025-1-22%EF%BC%8C%E4%BF%AE%E6%94%B9%EF%BC%9A2025-1-24-11-30"><span class="toc-text">创建：2025_1_22，修改：2025_1_24 11:30</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bug-reserved-%E5%85%B3%E4%BA%8EQemu%E4%B8%AD%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84BUG%E7%9A%84%E8%AE%A8%E8%AE%BA"><span class="toc-text">[Bug reserved.]关于Qemu中可能存在的BUG的讨论</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%EF%BC%9A2025-1-24-11-44"><span class="toc-text">创建：2025-1-24 11:44</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FIXED-%E5%9C%A8%E5%85%B3%E4%BA%8EArceOS-mocklibc-libloader%E4%B8%AD%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA%E7%9A%84BUG%E4%BF%AE%E5%A4%8D-%E8%A7%81%E4%B8%93%E9%A2%98%E6%96%87%E7%AB%A0"><span class="toc-text">[FIXED] 在关于ArceOS mocklibc_libloader中线程创建的BUG修复[见专题文章]</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA2025-1-24-11%EF%BC%9A30"><span class="toc-text">创建2025_1_24 11：30</span></a></li></ol></li></ol></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> Shall I compare thee to a summer&#39;s day? </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        ArceOS的mocklibc开发手记
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2025-01-18 21:43:47</span></span>
+        
+        <span class="attr">标签：/
+        
+        <a class="tag" href="/tags/#ArceOS开发日记" title="ArceOS开发日记">ArceOS开发日记</a>
+        <span>/</span>
+        
+        <a class="tag" href="/tags/#mocklibc开发手记" title="mocklibc开发手记">mocklibc开发手记</a>
+        <span>/</span>
+        
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content no-indent">
+        <p>[TOC]</p>
+<h1 id="0-这个文件的必要性和阅读的注意事项"><a href="#0-这个文件的必要性和阅读的注意事项" class="headerlink" title="0. 这个文件的必要性和阅读的注意事项"></a>0. 这个文件的必要性和阅读的注意事项</h1><p>因为自己在实现musl兼容库——mocklibc的时候，往往要进行一些分析，也要写一些东西。这些东西往往不成体系，也没有什么总结的价值，基本是随写随丢的状态。但是这个随写随丢有时候反而会造成一些困扰，特别是在回顾之前思路的时候。同时，写下这个博客也算是记录自己的工作内容</p>
+<p>所以，我开了这个文件，用来记录自己的笔记。作为阅听者的你，<strong>除非有特别的需求，否则建议退出</strong>，因为这里的内容可能是<strong>错误的，有偏差的，毫无格式的，语言不通顺的，可能会给你带来误导，特别当你对相关问题不熟悉的情况下！！！</strong></p>
+<p>阅读方式：基本没有什么固定的格式，一个建议的格式如下：</p>
+<ul>
+<li>  发生一个事件、实现、修复或思考的时候，将其记录在三级标题中</li>
+<li>  在每一个三级标题下有一个四级标题，用于记录创建时间与最后修改时间</li>
+</ul>
+<h1 id="1-mocklibc开发手记"><a href="#1-mocklibc开发手记" class="headerlink" title="1. mocklibc开发手记"></a>1. mocklibc开发手记</h1><h3 id="ADD-sleep函数"><a href="#ADD-sleep函数" class="headerlink" title="[ADD] sleep函数"></a>[ADD] sleep函数</h3><h4 id="创建：2025-1-18-21-53；修改：2025-1-18-22-09"><a href="#创建：2025-1-18-21-53；修改：2025-1-18-22-09" class="headerlink" title="创建：2025_1_18_21:53；修改：2025_1_18_22:09"></a>创建：2025_1_18_21:53；修改：2025_1_18_22:09</h4><p>需要实现的：<code>sleep()</code>，依赖于：<code>nanosleep()</code>，<code>nanosleep</code>依赖于<code>syscall_ret</code>和<code>__clock_nanosleep()</code></p>
+<p><code>syscall_ret</code>本身不难实现，注意的是要写入一个叫做<code>errno</code>的全局变量中</p>
+<p><code>__clock_nanosleep</code>或许可以作为替换的选择</p>
+<p><code>__clock_nanosleep</code>函数依赖<code>__syscall_cp</code>函数，以及<code>IS32BIT</code>宏（定义在好多地方）</p>
+<p><code>src/thread/__syscall_cp.c</code> 在中，通过 <code>week_alias</code> 告诉我们当 single thread 的时候 <code>syscall_cp</code> 可以退化为普通的 syscall 的。</p>
+<p>不行的话，我就替换<code>__clock_nanosleep</code></p>
+<p>有一说一可以直接用sleep，ArceOS底层有这个函数[X]，就用这个</p>
+<p>完成支持。</p>
+<h3 id="FIXME-BUG-实现pthread"><a href="#FIXME-BUG-实现pthread" class="headerlink" title="[FIXME] BUG 实现pthread"></a>[FIXME] BUG 实现pthread</h3><h4 id="创建19号上午"><a href="#创建19号上午" class="headerlink" title="创建19号上午"></a>创建19号上午</h4><p>很奇怪，在不同情况下会跑飞之类的，但是也就这样了吧，先放下，解决另一个</p>
+<h3 id="XXX-BUG-Math库中，所有带l（long）类型的操作都会被导向到一些奇怪的符号，例如-getf2"><a href="#XXX-BUG-Math库中，所有带l（long）类型的操作都会被导向到一些奇怪的符号，例如-getf2" class="headerlink" title="[XXX] BUG Math库中，所有带l（long）类型的操作都会被导向到一些奇怪的符号，例如__getf2"></a>[XXX] BUG Math库中，所有带l（long）类型的操作都会被导向到一些奇怪的符号，例如__getf2</h3><h4 id="创建19号中午"><a href="#创建19号中午" class="headerlink" title="创建19号中午"></a>创建19号中午</h4><p>可能的相关文章：<a target="_blank" rel="noopener" href="https://github.com/ziglang/zig/issues/5320">https://github.com/ziglang/zig/issues/5320</a></p>
+<p><code>-fno-compiler-rt</code>是什么？</p>
+<p>有关运行时库的内容：<a target="_blank" rel="noopener" href="https://compiler-rt.llvm.org/">https://compiler-rt.llvm.org/</a></p>
+<p>这个是CSDN上的运行时库的介绍：<a target="_blank" rel="noopener" href="https://blog.csdn.net/ssdlearnerused/article/details/107426495">https://blog.csdn.net/ssdlearnerused/article/details/107426495</a></p>
+<p>这个是一个类似问题，有解决的：<a target="_blank" rel="noopener" href="https://rustcc.cn/article?id=50ac4eec-17eb-4fc7-be08-a23d7794fefc">https://rustcc.cn/article?id=50ac4eec-17eb-4fc7-be08-a23d7794fefc</a></p>
+<p>最接近和具有参考价值的：<a target="_blank" rel="noopener" href="https://github.com/termux/termux-packages/issues/8029">https://github.com/termux/termux-packages/issues/8029</a></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250119162526756.png" alt="image-20250119162526756"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250119162546755.png" alt="image-20250119162546755"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250119162657635.png" alt="image-20250119162657635"></p>
+<blockquote>
+<p>  Yeah, that’s the problem: libtool supplying all the link flags to the compiler and overriding the runtime library the compiler chooses with <code>-nostdlib</code>. Maybe it needs to be patched to add <code>compiler-rt</code> instead of <code>libgcc</code>, but in the meantime, perhaps we could override it by passing in <a target="_blank" rel="noopener" href="https://github.com/termux/termux-packages/blob/master/packages/swift/swift-ndk-23.patch#L187">the <code>-rtlib=compiler-rt</code> flag for those packages, as I did with the Swift CMake config</a>.<br>  是的，这就是问题所在： libtool 向编译器提供所有链接标志，并使用 <code>-nostdlib</code> 覆盖编译器选择的运行时库。也许需要修补以添加 <code>compiler-rt</code> 而不是 <code>libgcc</code>，但与此同时，也许我们可以通过为<a target="_blank" rel="noopener" href="https://github.com/termux/termux-packages/blob/master/packages/swift/swift-ndk-23.patch#L187">这些包传递 <code>-rtlib=compiler-rt</code> 标志来覆盖它，就像我对 Swift CMake 配置所做的那样</a>。</p>
+</blockquote>
+<p>gcc关于这个问题的通信邮件：</p>
+<p><a target="_blank" rel="noopener" href="https://gcc.gnu.org/legacy-ml/gcc/2001-09/msg00262.html">https://gcc.gnu.org/legacy-ml/gcc/2001-09/msg00262.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://gcc.gnu.org/legacy-ml/gcc/2001-09/msg00327.html">https://gcc.gnu.org/legacy-ml/gcc/2001-09/msg00327.html</a></p>
+<h5 id="第一次修改方式"><a href="#第一次修改方式" class="headerlink" title="第一次修改方式"></a>第一次修改方式</h5><p>添加链接：<code>$($CC -print-libgcc-file-name)</code></p>
+<h5 id="第一次修改前报错："><a href="#第一次修改前报错：" class="headerlink" title="第一次修改前报错："></a>第一次修改前报错：</h5><figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">make -C hello dynamic</span><br><span class="line">make[<span class="number">1</span>]: 进入目录“/home/marinatoo/Dev/arceos/mockc_apps/hello”</span><br><span class="line">riscv64-linux-musl-gcc -nostdlib -nodefaultlibs -ffreestanding -O0 -mcmodel=medany -nostartfiles -I../../ulib/mocklibc_lib/include -c hello.c  -o hello.o </span><br><span class="line">riscv64-linux-musl-ld hello.o  -L../../ulib/mocklibc_lib/<span class="keyword">lib</span> -lmock    -o hello</span><br><span class="line">riscv64-linux-musl-ld: warning: cannot find entry symbol _start; defaulting <span class="keyword">to</span> <span class="number">0000000000010500</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__getf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__eqtf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__addtf3<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__floatsitf<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__divtf3<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__letf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__fixtfdi<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__fixtfsi<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__lttf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__netf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__extenddftf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__extendsftf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__multf3<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__gttf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__subtf3<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__trunctfsf2<span class="comment">&#x27;</span></span><br><span class="line">riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/<span class="keyword">lib</span>/libmock.so: undefined reference <span class="keyword">to</span> `__trunctfdf2<span class="comment">&#x27;</span></span><br><span class="line">make[<span class="number">1</span>]: *** [Makefile:<span class="number">37</span>：dynamic] 错误 <span class="number">1</span></span><br><span class="line">make[<span class="number">1</span>]: 离开目录“/home/marinatoo/Dev/arceos/mockc_apps/hello”</span><br><span class="line"><span class="symbol">make:</span> *** [Makefile:<span class="number">8</span>：subdir] 错误 <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="第一次修改后报错："><a href="#第一次修改后报错：" class="headerlink" title="第一次修改后报错："></a>第一次修改后报错：</h5><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">make</span> -C hello dynamic</span><br><span class="line"><span class="attribute">make</span>[<span class="number">1</span>]: 进入目录“/home/marinatoo/Dev/arceos/mockc_apps/hello”</span><br><span class="line"><span class="attribute">riscv64</span>-linux-musl-gcc -nostdlib -nodefaultlibs -ffreestanding -O<span class="number">0</span> -mcmodel=medany -nostartfiles -I../../ulib/mocklibc_lib/include -c hello.c  -o hello.o </span><br><span class="line"><span class="attribute">riscv64</span>-linux-musl-ld hello.o  -L../../ulib/mocklibc_lib/lib -lmock   /home/marinatoo/App/riscv<span class="number">64</span>-linux-musl-cross/bin/../lib/gcc/riscv<span class="number">64</span>-linux-musl/<span class="number">11</span>.<span class="number">2</span>.<span class="number">1</span>/libgcc.a -o hello</span><br><span class="line"><span class="attribute">riscv64</span>-linux-musl-ld: warning: cannot find entry symbol _start; defaulting to <span class="number">0000000000010500</span></span><br><span class="line"><span class="attribute">riscv64</span>-linux-musl-ld: hello: hidden symbol `__getf<span class="number">2</span>&#x27; in /home/marinatoo/App/riscv<span class="number">64</span>-linux-musl-cross/bin/../lib/gcc/riscv<span class="number">64</span>-linux-musl/<span class="number">11</span>.<span class="number">2</span>.<span class="number">1</span>/libgcc.a(getf<span class="number">2</span>.o) is referenced by DSO</span><br><span class="line"><span class="attribute">riscv64</span>-linux-musl-ld: final link failed: bad value</span><br><span class="line"><span class="attribute">make</span>[<span class="number">1</span>]: ***<span class="meta"> [Makefile:37：dynamic] 错误 1</span></span><br><span class="line"><span class="meta">make[1]: 离开目录“/home/marinatoo/Dev/arceos/mockc_apps/hello”</span></span><br><span class="line"><span class="meta">make: *** [Makefile:8：subdir] 错误 2</span></span><br></pre></td></tr></table></figure>
+
+<p>可能原因：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/23696585/what-does-exactly-the-warning-mean-about-hidden-symbol-being-referenced-by-dso">https://stackoverflow.com/questions/23696585/what-does-exactly-the-warning-mean-about-hidden-symbol-being-referenced-by-dso</a></p>
+<p>问题并未得到解决，这里我想应该是将上述符号切换为DEFAULT（HIDDEN），而不是让他们保持NOTYPE.</p>
+<p>这是另一个相关的：<a target="_blank" rel="noopener" href="https://gcc.gnu.org/bugzilla/show_bug.cgi?format=multiple&amp;id=36669">https://gcc.gnu.org/bugzilla/show_bug.cgi?format=multiple&amp;id=36669</a></p>
+<h4 id="该问题的完整描述："><a href="#该问题的完整描述：" class="headerlink" title="该问题的完整描述："></a>该问题的完整描述：</h4><p>我的问题是这样的：我使用的是musl的编译器（版本不重要），其在面临<code>float_128</code>类型变量的时候，出于某些我目前不能肯定的原因（我有看到说musl不支持这个长度），会尝试链接外部的函数，例如：<code>__getf2</code>这样的。<br>但是相关函数musl库本身并没有实现，那么我使用musl编译库的时候就会出现，由于我是要开发自己的库，使用了<code>-nostdlib</code>，所以屏蔽了标准库，然后我想说要不就先链接已有的这些外部函数。路径如下：<code>/home/marinatoo/App/riscv64-linux-musl-cross/bin/../lib/gcc/riscv64-linux-musl/11.2.1/libgcc.a(getf2.o)</code>，然后链接后出现的问题是：<br><code>musl</code>提供的<code>gcc</code>库里相关的符号是<code>hidden</code>的。然后我尝试链接会报错：<code>riscv64-linux-musl-ld: hello: hidden symbol __getf2&#39; in /home/marinatoo/App/riscv64-linux-musl-cross/bin/../lib/gcc/riscv64-linux-musl/11.2.1/libgcc.a(getf2.o) is referenced by DSO</code>。不链接的话就是<code>riscv64-linux-musl-ld: ../../ulib/mocklibc_lib/lib/libmock.so: undefined reference to __getf2&#39;</code></p>
+<p>不过这个在遇到float 128类型的时候调用llvm的compile_rt的行为是编译器进行的，所以其实有一个解决方案，就是将它需要的函数自己实现出来，不过考虑到其工作之多，我选择去部分使用llvm的那个实现，不过llvm最终就是用的我上面的那个gcc的实现，我也不确定是不是musl编译器自己的行为。<br>但是我出问题的函数是个纯数学库，然后编译后的目标文件中引用了符号”__getf2”，然后在这里是没有调用这个函数的，就是，这个是一个0函数调用库，它使用了一些宏定义（如 RPOLY 和 VPOLY）来计算多项式，但这些宏只是用来计算值，并不涉及对其他函数的调用。</p>
+<p>然后我的编译选项如下：<code>CFLAGS = -nostartfiles -ffreestanding -nostdlib -O0 -mcmodel=medany $(INTERNAL_INCLUDE) -fPIC</code></p>
+<p><code>$(SHARED_LIB): $(LIBOBJS) $(CRTOBJS) $(CC) $(CFLAGS) $(LDFLAGS) -shared -fPIC -o $@ $^</code></p>
+<p><code>LINK_FLAGS += /home/marinatoo/App/riscv64-linux-musl-cross/bin/../lib/gcc/riscv64-linux-musl/11.2.1/libgcc.a # 尝试修正compile-rt被-nolib屏蔽的问题，也就是__getf2符号没有的问题。</code></p>
+<p>这个LINK_FLAGS就是在尝试手动链接这些缺失的库的，不过可以不加</p>
+<p>==最终我还是选择自己去实现这些函数，然后直接链接了，然后在这里函数中跳转到一个“未实现”的系统调用，然后直接退出==</p>
+<h3 id="思考：是否可以找到足够底层且开放的输出接口，去完成musl中的输出底层接口的替换"><a href="#思考：是否可以找到足够底层且开放的输出接口，去完成musl中的输出底层接口的替换" class="headerlink" title="思考：是否可以找到足够底层且开放的输出接口，去完成musl中的输出底层接口的替换"></a>思考：是否可以找到足够底层且开放的输出接口，去完成musl中的输出底层接口的替换</h3><h4 id="创建：1-20-9-06"><a href="#创建：1-20-9-06" class="headerlink" title="创建：1_20_9:06"></a>创建：1_20_9:06</h4><p>可能是<code>axhal::console::write_bytes(s.as_bytes());</code>，不带<code>fmt</code>，能直接输出，似乎可以作为musl中<code>print_core</code>函数的输出接口。往下再探索，发现其实就已经是跟具体的架构相关的代码了，感觉不是很适合继续挖掘。</p>
+<p>现在的问题是，我打算直接使用printf_core来验证思路，但是printf_core在使用errno，而errno是需要通过<code>__errno_location()</code>的返回值来获取的，<code>__errno_location()</code>依赖<code>__pthread_self()</code>来获得，同时也依赖其返回的结构体指针，然后我要定位这个函数的位置。</p>
+<p><code>#define __pthread_self() ((pthread_t)__get_tp())</code>，依赖<code>__get_tip()</code>。这个与架构相关，RV64的：<code>nvim arch/riscv64/pthread_arch.h</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static inline uintptr_t __get_tp()</span><br><span class="line">&#123;</span><br><span class="line">	uintptr_t tp;</span><br><span class="line">	__asm__ __volatile__(&quot;mv %0, tp&quot; : &quot;=r&quot;(tp));</span><br><span class="line">	return tp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#define TLS_ABOVE_TP</span><br><span class="line">#define GAP_ABOVE_TP 0</span><br><span class="line"></span><br><span class="line">#define DTP_OFFSET 0x800</span><br><span class="line"></span><br><span class="line">#define MC_PC __gregs[0]</span><br></pre></td></tr></table></figure>
+
+<p>我在想，这样的汇编其实什么都没做，不会影响执行流（对于RV64），那么是否可以直接用？</p>
+<p>==<strong>我发现printf函数在面对FILE的问题的时候，需要大幅修改原来函数，会使得思路二的优势丧失，不建议使用了</strong>==</p>
+<p>==<strong>在没有系统解决FILE的兼容之前，不能盲目替换。因此暂时放弃相关想法</strong>==</p>
+<h3 id="开发errno以及-errno-location-函数"><a href="#开发errno以及-errno-location-函数" class="headerlink" title="开发errno以及__errno_location()函数"></a>开发<code>errno</code>以及<code>__errno_location()</code>函数</h3><h4 id="创建：2025-1-20-13-16"><a href="#创建：2025-1-20-13-16" class="headerlink" title="创建：2025_1_20 13:16"></a>创建：2025_1_20 13:16</h4><p>直接复制的，用的就是上面的思路，直接使用，经过测试是报错了。</p>
+<p>在理论上而言，tp应当指向一个结构体，映射关系就在这个结构体中，说明当前的硬件线程编号，以及已经分配的地址空间。但是我发现报错了，报的LoadFault。但是tp看不太出来问题：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">Unhandled <span class="built_in">trap</span> Exception(LoadFault) @ 0xffffffc080110670:</span><br><span class="line">TrapFrame &#123;</span><br><span class="line">    regs: GeneralRegisters &#123;</span><br><span class="line">        ra: 0xffffffc08011066e,</span><br><span class="line">        sp: 0xffffffc080266620,</span><br><span class="line">        gp: 0xffffffc08026aff0,</span><br><span class="line">        tp: 0xffffffc080266520,</span><br><span class="line">        t0: 0xffffffc08021b8c8,</span><br><span class="line">        t1: 0xffffffc0801104ec,</span><br><span class="line">        t2: 0xf0,</span><br><span class="line">        s0: 0xffffffc080266670,</span><br><span class="line">        s1: 0x1,</span><br><span class="line">        a0: 0x80047f5c,</span><br><span class="line">        a1: 0x4,</span><br><span class="line">        a2: 0x0,</span><br><span class="line">        a3: 0x4,</span><br><span class="line">        a4: 0x4000000000,</span><br><span class="line">        a5: 0x80047f5c,</span><br><span class="line">        a6: 0x0,</span><br><span class="line">        a7: 0x4442434e,</span><br><span class="line">        s2: 0x2,</span><br><span class="line">        s3: 0xffffffc0802668b8,</span><br><span class="line">        s4: 0xffffffc080266958,</span><br><span class="line">        s5: 0xffffffc0802668f8,</span><br><span class="line">        s6: 0xffffffc08032f766,</span><br><span class="line">        s7: 0x11300000001,</span><br><span class="line">        s8: 0xffffffc08026aff0,</span><br><span class="line">        s9: 0x18,</span><br><span class="line">        s10: 0x9,</span><br><span class="line">        s11: 0x4,</span><br><span class="line">        t3: 0xffffffc08032f746,</span><br><span class="line">        t4: 0xffffffffffffffbf,</span><br><span class="line">        t5: 0x1,</span><br><span class="line">        t6: 0xffffffffffffff8f,</span><br><span class="line">    &#125;,</span><br><span class="line">    sepc: 0xffffffc080110670,</span><br><span class="line">    sstatus: 0x8000000200006100,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250120140704716.png" alt="image-20250120140704716"></p>
+<p>总体而言是这样的，所以是出现了一些问题，本来应该去访问高地址的</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250120152822543.png" alt="image-20250120152822543"></p>
+<p>所以是<code>tp</code>寄存器本身的问题，这里会出现问题，也就是tp寄存器存在问题。tp寄存器存放的数值很奇怪，或者说，是否意味着，这个值本来就是在低地址呢？</p>
+<p>==<strong>保留BUG</strong>==</p>
+<h3 id="我觉得得做文件系统的迁移了"><a href="#我觉得得做文件系统的迁移了" class="headerlink" title="我觉得得做文件系统的迁移了"></a>我觉得得做文件系统的迁移了</h3><h4 id="创建：1-20-16-20"><a href="#创建：1-20-16-20" class="headerlink" title="创建：1_20 16:20"></a>创建：1_20 16:20</h4><p>思路，先通过对文件系统操作的迁移，理解ArceOS的文件系统与Linux的文件系统的最基础共同点，然后以此为基础，进行对Linux文件系统的模拟</p>
+<p>然后文件系统的迁移要优先考虑一些宏观操作的相同。</p>
+<p>重点是能不能找到一些同级抽象的东西，或者说比目标兼容库更底层的操作，并以这些操作为基础组合模拟目标兼容库的底层操作。</p>
+<p>做了一些</p>
+<h3 id="FIXED-BUG修复：动态链接编译的时候，尤其是开了没有startfile的那个选项后，entry可能不是main函数"><a href="#FIXED-BUG修复：动态链接编译的时候，尤其是开了没有startfile的那个选项后，entry可能不是main函数" class="headerlink" title="[FIXED] BUG修复：动态链接编译的时候，尤其是开了没有startfile的那个选项后，entry可能不是main函数"></a>[FIXED] BUG修复：动态链接编译的时候，尤其是开了没有startfile的那个选项后，entry可能不是main函数</h3><p>在load.rs中修复：</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121111255172.png" alt="image-20250121111255172"></p>
+<p>修改后：</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121115923606.png" alt="image-20250121115923606"></p>
+<h3 id="FIXED-BUG修复：lgamma-r-c文件中的函数在编译后会出现bgu指令，对a5寄存器的空间写，但是a5已经成0了，目前看不出有什么特别的点"><a href="#FIXED-BUG修复：lgamma-r-c文件中的函数在编译后会出现bgu指令，对a5寄存器的空间写，但是a5已经成0了，目前看不出有什么特别的点" class="headerlink" title="[FIXED] BUG修复：lgamma_r.c文件中的函数在编译后会出现bgu指令，对a5寄存器的空间写，但是a5已经成0了，目前看不出有什么特别的点"></a>[FIXED] BUG修复：lgamma_r.c文件中的函数在编译后会出现bgu指令，对a5寄存器的空间写，但是a5已经成0了，目前看不出有什么特别的点</h3><h4 id="创建时间：1-21-20：29"><a href="#创建时间：1-21-20：29" class="headerlink" title="创建时间：1_21 20：29"></a>创建时间：1_21 20：29</h4><p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121202922883.png" alt="image-20250121202922883"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121203003271.png" alt="image-20250121203003271"></p>
+<p>很神奇</p>
+<p>出于对sw命令的定位，我做了如下操作：<img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121203350630.png" alt="image-20250121203350630"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121203336409.png" alt="image-20250121203336409"></p>
+<p>所以，问题定位完成。</p>
+<p>问题是，这个东西理论上是有的哇：<br><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121203808277.png" alt="image-20250121203808277"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121203822400.png" alt="image-20250121203822400"></p>
+<p>可能是因为是全局变量的原因，没有被正确的指定！</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121204100305.png" alt="image-20250121204100305"></p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121204335172.png" alt="image-20250121204335172"></p>
+<p>所以我们可以知道，要在modify的时候，为这些全局变量做modify。</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121205251093.png" alt="image-20250121205251093"></p>
+<p>这个符号我好像早就注意到了，但是一直没有理会，没想到真的出问题了。</p>
+<p>一个很值得思考的是，函数是txt，所以位置是固定的，也不用考虑那么多，但是全局变量是什么东西？这个放在哪里？</p>
+<p>最后修复方案：<img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250121213221303.png" alt="image-20250121213221303"></p>
+<h3 id="阅读计划：https-blog-csdn-net-tjcwt2011-article-details-106520862"><a href="#阅读计划：https-blog-csdn-net-tjcwt2011-article-details-106520862" class="headerlink" title="阅读计划：https://blog.csdn.net/tjcwt2011/article/details/106520862"></a>阅读计划：<a target="_blank" rel="noopener" href="https://blog.csdn.net/tjcwt2011/article/details/106520862">https://blog.csdn.net/tjcwt2011/article/details/106520862</a></h3><h3 id="FIXED-超长期的一个BUG"><a href="#FIXED-超长期的一个BUG" class="headerlink" title="[FIXED] 超长期的一个BUG"></a>[FIXED] 超长期的一个BUG</h3><h4 id="创建：1-21-20-44-修改：-1-24-11-32"><a href="#创建：1-21-20-44-修改：-1-24-11-32" class="headerlink" title="创建：1_21 20:44 修改： 1_24 11:32"></a>创建：1_21 20:44 修改： 1_24 11:32</h4><p>我发现，似乎在某些情况下，qemu在启动-l debug选项的时候就会发生：qemu卡死在一个tlb重填的位置，然后一直卡着，关闭掉qemu之后，反而在qemu.log上一直在写入，但是在文件系统中找不到文件，可是硬盘很快就会占满！具体描述后面我会插视频！</p>
+<p>然而这个bug感觉似乎不是随时都可以的，而是在特殊的一段时间内，会频繁的发生，现在就可以，我有一个猜想：==可能是内存剩余空间少的时候，就会发生问题！==</p>
+<p>==已经修正==</p>
+<p>这个BUG的修正似乎与下面这个有一定的关系，当我修正[这个问题](#[FIXED] 关于在部分情况下使用debug参数和其他参数结果不一致的问题)后，这个超长期BUG就自己消失了。</p>
+<h3 id="FIXED-关于在部分情况下使用debug参数和其他参数结果不一致的问题"><a href="#FIXED-关于在部分情况下使用debug参数和其他参数结果不一致的问题" class="headerlink" title="[FIXED] 关于在部分情况下使用debug参数和其他参数结果不一致的问题"></a>[FIXED] 关于在部分情况下使用debug参数和其他参数结果不一致的问题</h3><h4 id="创建：2025-1-22，修改：2025-1-24-11-30"><a href="#创建：2025-1-22，修改：2025-1-24-11-30" class="headerlink" title="创建：2025_1_22，修改：2025_1_24 11:30"></a>创建：2025_1_22，修改：2025_1_24 11:30</h4><p>在过去一段时间内，在杨金全同学的帮助下，我发现了在libloader_lib应用中src/main.rs下汇编代码的一处错误，在修正这个错误后，似乎在执行QEMU模拟的时候不会再发生启用debug log参数和启用info log参数在结果上有不同的bug了。</p>
+<p>具体如下：</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250124113039792.png" alt="image-20250124113039792"></p>
+<p>修改后：</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250124113059508.png" alt="image-20250124113059508"></p>
+<p>由于写下这个记录距离修正BUG已经过了两天，所以记录不是很详细</p>
+<p>推测是由于写入的错误，损坏了一些关键信息，而这些信息在启用debug参数后是会被关键依赖，导致控制流程跑飞。具体跑飞包括LoadFault、StoreFault、TLB反复重填写等等。在启用qemulog记录的情况下，还会出现卡死、无法退出模拟，==并且在强行关闭后依然发生着向qemulog持续不停的写入新记录的情况，只能重启解决。这个问题我觉得很有意思，而且应该会导向qemu的一个关键bug。目前qemu的版本为9.1.2，系统是Ubuntu22.04 LTS。目前暂时不准备解决。我捕捉到一次发生的卡死是卡在了TLB重填写的部分，在访问一个地址的时候发生TLB缺失，重填后依然缺失，如此循环。==</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250124114220469.png" alt="image-20250124114220469"></p>
+<p>这个是一个截图的一部分，但是也完整涵盖了整个循环流程，因为截图中有隐私信息，就不全部展示了。</p>
+<h3 id="Bug-reserved-关于Qemu中可能存在的BUG的讨论"><a href="#Bug-reserved-关于Qemu中可能存在的BUG的讨论" class="headerlink" title="[Bug reserved.]关于Qemu中可能存在的BUG的讨论"></a>[Bug reserved.]关于Qemu中可能存在的BUG的讨论</h3><h4 id="创建：2025-1-24-11-44"><a href="#创建：2025-1-24-11-44" class="headerlink" title="创建：2025-1-24 11:44"></a>创建：2025-1-24 11:44</h4><p>[上述BUG](#[FIXED] 关于在部分情况下使用debug参数和其他参数结果不一致的问题)修正前会出现：</p>
+<p>推测是由于写入的错误，损坏了一些关键信息，而这些信息在启用debug参数后是会被关键依赖，导致控制流程跑飞。具体跑飞包括LoadFault、StoreFault、TLB反复重填写等等。在启用qemulog记录的情况下，还会出现卡死、无法退出模拟，==并且在强行关闭后依然发生着向qemulog持续不停的写入新记录的情况，只能重启解决。这个问题我觉得很有意思，而且应该会导向qemu的一个关键bug。目前qemu的版本为9.1.2，系统是Ubuntu22.04 LTS。目前暂时不准备解决。我捕捉到一次发生的卡死是卡在了TLB重填写的部分，在访问一个地址的时候发生TLB缺失，重填后依然缺失，如此循环。==</p>
+<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250124114220469.png" alt="image-20250124114220469"></p>
+<p>这个是一个截图的一部分，但是也完整涵盖了整个循环流程，因为截图中有隐私信息，就不全部展示了。</p>
+<p>QEMU可能存在的BUG点是：在运行的时候卡死，就不能正常退出，而且退出后依然在向log书写，即使删除qemu.log，还是会继续书写，直到将空间占满卡崩Ubuntu。</p>
+<p>BUG可以通过以下方式复现，感兴趣的可以去查看：</p>
+<p>访问<a target="_blank" rel="noopener" href="https://github.com/inchinaxiaofeng/arceos/tree/mocklibc_libloader">BUG所在的仓库分支</a>，BUG存在于<a target="_blank" rel="noopener" href="https://github.com/inchinaxiaofeng/arceos/commit/1c38b664e5b59932b4ee07be8bdd88935390db57">这一条提交记录</a>中。clone之后，在arceos（也就是下载下的那个目录）中切换到对应的mocklibc_libloader分支下的提交记录：Commit 1c38b66，然后在arceos目录下运行命令<code>./loader_lib.sh -l debug</code>，就可以观察到。</p>
+<p>再次声明我的环境：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">qemu --version</span><br><span class="line">qemu-io version 9.1.2</span><br><span class="line">Copyright (c) 2003-2024 Fabrice Bellard and the QEMU Project developers</span><br><span class="line"></span><br><span class="line">cargo --version</span><br><span class="line">warning: `/home/marinatoo/.cargo/config` is deprecated <span class="keyword">in</span> favor of `config.toml`</span><br><span class="line">note: <span class="keyword">if</span> you need to support cargo 1.38 or earlier, you can symlink `config` to `config.toml`</span><br><span class="line">cargo 1.85.0-nightly (652623b77 2024-12-20)</span><br><span class="line"></span><br><span class="line">neofetch</span><br><span class="line">            .-/+oossssoo+/-.               marinatoo@marinatoo-ASUS-TUF </span><br><span class="line">        `:+ssssssssssssssssss+:`           ---------------------------- </span><br><span class="line">      -+ssssssssssssssssssyyssss+-         OS: Ubuntu 22.04.4 LTS x86_64 </span><br><span class="line">    .ossssssssssssssssssdMMMNysssso.       Host: ASUS TUF Gaming F15 FX507ZM_FX507ZM 1.0 </span><br><span class="line">   /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: 6.8.0-51-generic </span><br><span class="line">  +ssssssssshmydMMMMMMMNddddyssssssss+     Uptime: 1 hour, 46 mins </span><br><span class="line"> /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Packages: 2675 (dpkg), 21 (snap) </span><br><span class="line">.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Shell: bash 5.1.16 </span><br><span class="line">+sssshhhyNMMNyssssssssssssyNMMMysssssss+   Resolution: 4096x2304 </span><br><span class="line">ossyNMMMNyMMhsssssssssssssshmmmhssssssso   DE: GNOME 42.9 </span><br><span class="line">ossyNMMMNyMMhsssssssssssssshmmmhssssssso   WM: Mutter </span><br><span class="line">+sssshhhyNMMNyssssssssssssyNMMMysssssss+   WM Theme: Adwaita </span><br><span class="line">.ssssssssdMMMNhsssssssssshNMMMdssssssss.   Theme: Yaru [GTK2/3] </span><br><span class="line"> /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/    Icons: Yaru [GTK2/3] </span><br><span class="line">  +sssssssssdmydMMMMMMMMddddyssssssss+     Terminal: WarpTerminal </span><br><span class="line">   /ssssssssssshdmNNNNmyNMMMMhssssss/      CPU: 12th Gen Intel i7-12700H (20) @ 2.300GHz </span><br><span class="line">    .ossssssssssssssssssdMMMNysssso.       GPU: Intel Alder Lake-P </span><br><span class="line">      -+sssssssssssssssssyyyssss+-         GPU: NVIDIA GeForce RTX 3060 Mobile / Max-Q </span><br><span class="line">        `:+ssssssssssssssssss+:`           Memory: 10288MiB / 15608MiB </span><br><span class="line">            .-/+oossssoo+/-.</span><br><span class="line">                                                                   </span><br><span class="line">                                                                   </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="FIXED-在关于ArceOS-mocklibc-libloader中线程创建的BUG修复-见专题文章"><a href="#FIXED-在关于ArceOS-mocklibc-libloader中线程创建的BUG修复-见专题文章" class="headerlink" title="[FIXED] 在关于ArceOS mocklibc_libloader中线程创建的BUG修复[见专题文章]"></a>[FIXED] 在关于ArceOS mocklibc_libloader中线程创建的BUG修复[见专题文章]</h3><h4 id="创建2025-1-24-11：30"><a href="#创建2025-1-24-11：30" class="headerlink" title="创建2025_1_24 11：30"></a>创建2025_1_24 11：30</h4>
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/inchinaxiaofeng">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
