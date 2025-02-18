@@ -13,7 +13,7 @@
 
     <title>
         
-        ArceOS的mocklibc_libloader开发的线程问题与思考 - Marina的一人派对
+        对Linux内核中sysfs与procfs的理解、分析与研究，以及如何指导ArceOS完成对其的模拟以支持更广泛的应用 - Marina的一人派对
         
     </title>
 
@@ -102,7 +102,7 @@
     </div>
     
         <div id="toc" class="toc-article">
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0-%E9%97%AE%E9%A2%98%E7%9A%84%E5%87%BA%E7%8E%B0"><span class="toc-text">0. 问题的出现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B"><span class="toc-text">1. 调试过程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E5%A4%84%E7%90%86%E8%8E%AB%E5%90%8D%E5%85%B6%E5%A6%99CPU-ID"><span class="toc-text">1.1. 处理莫名其妙CPU_ID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E5%A4%84%E7%90%86Already-initialized%E4%B8%8E%E8%B7%91%E9%A3%9E"><span class="toc-text">1.2. 处理Already initialized与跑飞</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E5%A4%84%E7%90%86LoadFault"><span class="toc-text">1.3. 处理LoadFault</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%80%BB%E7%BB%93"><span class="toc-text">2. 总结</span></a></li></ol>
+    
 </div>
     
 </div>
@@ -134,21 +134,21 @@
 
 <div class="post-container">
     <div class="post-title">
-        ArceOS的mocklibc_libloader开发的线程问题与思考
+        对Linux内核中sysfs与procfs的理解、分析与研究，以及如何指导ArceOS完成对其的模拟以支持更广泛的应用
     </div>
 
     <div class="post-meta">
-        <span class="attr">发布于：<span>2025-01-24 11:26:41</span></span>
+        <span class="attr">发布于：<span>2025-01-24 19:54:21</span></span>
         
         <span class="attr">标签：/
         
         <a class="tag" href="/tags/#ArceOS开发日记" title="ArceOS开发日记">ArceOS开发日记</a>
         <span>/</span>
         
-        <a class="tag" href="/tags/#线程" title="线程">线程</a>
+        <a class="tag" href="/tags/#sysfs与procfs" title="sysfs与procfs">sysfs与procfs</a>
         <span>/</span>
         
-        <a class="tag" href="/tags/#归档" title="归档">归档</a>
+        <a class="tag" href="/tags/#文件系统" title="文件系统">文件系统</a>
         <span>/</span>
         
         
@@ -158,27 +158,7 @@
 </span>
     </div>
     <div class="post-content no-indent">
-        <p>[TOC]</p>
-<h1 id="0-问题的出现"><a href="#0-问题的出现" class="headerlink" title="0. 问题的出现"></a>0. 问题的出现</h1><p>在为ArceOS实现pthread系函数的时候，迁移了杨金全同学的实现方法：</p>
-<p>杨金全同学自行实现了<code>__libc_start_main</code>函数，并对<code>App</code>中的PLT表进行查询重填，使得PLT表中<code>__libc_start_main</code>的表项指向ArceOS中实现的<code>__libc_start_main</code>函数。在这个函数中，调用了axtask下的<code>init_scheduler</code>方法完成分配器的初始化，然后去执行main函数。</p>
-<p>我迁移的操作如下：我的执行流程是ArceOS调用Lib中的自己实现的函数<code>_start</code>和<code>_start_c</code>，在<code>_start_c</code>中调用ArceOS提供的，封装了<code>init_scheduler</code>操作的接口，然后调用<code>main</code>函数进入App执行。</p>
-<p>迁移后出现的问题是：（不是同时出现的）</p>
-<ol start="0">
-<li>  qemu运行时开启debug参数导致结果不一致，开启debug+qemulog会导致卡死等问题。这个问题在ArceOS的mocklibc开发手记中有较为详细的记载，在此不做进一步讨论。</li>
-<li>  CPUID有问题</li>
-<li>  Already initialized</li>
-<li>  直接跑飞，报一个LoadFault</li>
-</ol>
-<h1 id="1-调试过程"><a href="#1-调试过程" class="headerlink" title="1. 调试过程"></a>1. 调试过程</h1><h2 id="1-1-处理莫名其妙CPU-ID"><a href="#1-1-处理莫名其妙CPU-ID" class="headerlink" title="1.1. 处理莫名其妙CPU_ID"></a>1.1. 处理莫名其妙CPU_ID</h2><p>通过对过程的追查，确定可能是GP寄存器导致的问题，事实上整个后续流程都是GP寄存器的问题。不过在这个过程中间，我们首先注意到了CPU_ID是一个奇奇怪怪的值，按道理只因该有一个，也就是0，但是似乎是不对的。处理如下：</p>
-<p><img src="http://marina-too.oss-cn-hangzhou.aliyuncs.com/img/image-20250124195011583.png" alt="image-20250124195011583"></p>
-<p>确定直到进入main之前都还是正确的，于是在这里保存了CPU_ID</p>
-<p>==更正：这个部分什么都没干！是我理解错了。==</p>
-<h2 id="1-2-处理Already-initialized与跑飞"><a href="#1-2-处理Already-initialized与跑飞" class="headerlink" title="1.2. 处理Already initialized与跑飞"></a>1.2. 处理Already initialized与跑飞</h2><p>在already initialized问题中，确定了是我自己写的_start函数出现了问题。正常的musl调用流程是从_start开始，到_start_main_c，然后调用main函数。但是我自己实现的start函数似乎存在一些问题。而其中gp寄存器被一个依赖crates：percpu用于干别的事儿，但是我那个start函数并没有很好处理这个事情，导致跑飞了。</p>
-<p>==这里的记录已经是很久很久之后的事情了，完全想不起来。建议配合着1月24日前后的提交记录去查看。==</p>
-<h2 id="1-3-处理LoadFault"><a href="#1-3-处理LoadFault" class="headerlink" title="1.3. 处理LoadFault"></a>1.3. 处理LoadFault</h2><p>其实LoadFault好像直接被解决了，之后并没有遇到。</p>
-<p>==这里的记录已经是很久很久之后的事情了，完全想不起来。建议配合着1月24日前后的提交记录去查看。==</p>
-<h1 id="2-总结"><a href="#2-总结" class="headerlink" title="2. 总结"></a>2. 总结</h1><p>十分糟糕，写完1.1之后就没有再动笔了，1.2.的记录已经是将近一个月之后的事情了。所以现在很难总结出什么东西，只能说尽可能的回想一些。这篇就到这里吧。</p>
-
+        
         
         <br />
         <div id="comment-container">
