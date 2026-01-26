@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang=zh-CN>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:description" content="Marina&#39;s blog">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Marina&#39;s blog">
+    <meta name="keyword"  content="Marina,inchinaxiaofeng,CPU&amp;OS,ysyx,ArceOS">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+        OSOC二周目日记 - Marina的一人派对
+        
+    </title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/aircloud.css">
+
+    
+<link rel="stylesheet" href="/css/gitment.css">
+
+    <!--<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">-->
+    <link href="//at.alicdn.com/t/font_620856_28hi1hpxx24.css" rel="stylesheet" type="text/css">
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Marina的一人派对" type="application/atom+xml">
+</head>
+
+<body>
+
+<div class="site-nav-toggle" id="site-nav-toggle">
+    <button>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+        <span class="btn-bar"></span>
+    </button>
+</div>
+
+<div class="index-about">
+    <i> Shall I compare thee to a summer&#39;s day? </i>
+</div>
+
+<div class="index-container">
+    
+    <div class="index-left">
+        
+<div class="nav" id="nav">
+    <div class="avatar-name">
+        <div class="avatar ">
+            <img src="/img/avatar.jpg" />
+        </div>
+        <div class="name">
+            <i>Marina TOO</i>
+        </div>
+    </div>
+    <div class="contents" id="nav-content">
+        <ul>
+            <li >
+                <a href="/">
+                    <i class="iconfont icon-shouye1"></i>
+                    <span>主页</span>
+                </a>
+            </li>
+            <li >
+                <a href="/tags">
+                    <i class="iconfont icon-biaoqian1"></i>
+                    <span>标签</span>
+                </a>
+            </li>
+            <li >
+                <a href="/archive">
+                    <i class="iconfont icon-guidang2"></i>
+                    <span>存档</span>
+                </a>
+            </li>
+            <li >
+                <a href="/collect/">
+                    <i class="iconfont icon-shoucang1"></i>
+                    <span>收藏</span>
+                </a>
+            </li>
+            <li >
+                <a href="/about/">
+                    <i class="iconfont icon-guanyu2"></i>
+                    <span>关于</span>
+                </a>
+            </li>
+            
+            <li>
+                <a id="search">
+                    <i class="iconfont icon-sousuo1"></i>
+                    <span>搜索</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    
+        <div id="toc" class="toc-article">
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%A4%8D%E5%81%A5"><span class="toc-text">项目复健</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-1-%E9%98%85%E8%AF%BBREADME-%E7%90%86%E8%A7%A3%E4%B9%8B%E5%89%8D%E7%9A%84%E5%BC%80%E5%8F%91%E6%80%9D%E8%B7%AF"><span class="toc-text">0.1 阅读README, 理解之前的开发思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-2-%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="toc-text">0.2 项目结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-3-%E5%90%8E%E7%BB%AD%E5%BC%80%E5%8F%91RoadMap-amp-Timeline"><span class="toc-text">0.3 后续开发RoadMap&amp;Timeline</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-1-The-Great-Purge-%E5%A4%A7%E6%B8%85%E6%B4%97-T-1-Day"><span class="toc-text">Phase 1: The Great Purge (大清洗) - [T + 1 Day]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-2-The-Great-Migration-%E5%A4%A7%E8%BF%81%E5%BE%99-T-2-Days"><span class="toc-text">Phase 2: The Great Migration (大迁徙) - [T + 2 Days]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-3-Standardization-%E7%AB%8B%E8%A7%84%E7%9F%A9-T-3-Days"><span class="toc-text">Phase 3: Standardization (立规矩) - [T + 3 Days]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Phase-4-Feature-Implementation-%E6%90%9E%E5%BB%BA%E8%AE%BE-T-1-Week"><span class="toc-text">Phase 4: Feature Implementation (搞建设) - [T + 1 Week]</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-4-%E8%87%AA%E6%88%91%E6%8F%90%E9%86%92-Note-to-Self"><span class="toc-text">0.4 自我提醒 (Note to Self)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0-5-%E6%8B%A8%E4%B9%B1%E5%8F%8D%E6%AD%A3%E6%97%A5%E8%AE%B0"><span class="toc-text">0.5 拨乱反正日记</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%89%E6%8B%A9"><span class="toc-text">抉择</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%9D%E6%AD%A5%E7%9A%84%E8%B0%83%E6%95%B4"><span class="toc-text">1. 初步的调整</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%84%9F%E5%8F%97"><span class="toc-text">感受</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E4%B8%80%E4%B8%AA%E9%98%B6%E6%AE%B5%E7%9A%84%E6%80%9D%E8%80%83"><span class="toc-text">下一个阶段的思考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%8C%E6%88%90%E4%BA%86-Elaborate"><span class="toc-text">2. 完成了 Elaborate</span></a></li></ol></li></ol>
+</div>
+    
+</div>
+
+
+<div class="search-field" id="search-field">
+    <div class="search-bg" id="search-bg"></div>
+    <div class="search-container">
+        <div class="search-input">
+            <span id="esc-search"> <i class="icon-fanhui iconfont"></i></span>
+            <input id="search-input"/>
+            <span id="begin-search">搜索</span>
+        </div>
+        <div class="search-result-container" id="search-result-container">
+
+        </div>
+    </div>
+</div>
+
+        <div class="index-about-mobile">
+            <i> Shall I compare thee to a summer&#39;s day? </i>
+        </div>
+    </div>
+    
+    <div class="index-middle">
+        <!-- Main Content -->
+        
+
+
+<div class="post-container">
+    <div class="post-title">
+        OSOC二周目日记
+    </div>
+
+    <div class="post-meta">
+        <span class="attr">发布于：<span>2026-01-21 09:15:09</span></span>
+        
+        </span>
+        <span class="attr">访问：<span id="busuanzi_value_page_pv"></span>
+</span>
+</span>
+    </div>
+    <div class="post-content no-indent">
+        <p>[TOC]</p>
+<h1 id="项目复健"><a href="#项目复健" class="headerlink" title="项目复健"></a>项目复健</h1><h2 id="0-1-阅读README-理解之前的开发思路"><a href="#0-1-阅读README-理解之前的开发思路" class="headerlink" title="0.1 阅读README, 理解之前的开发思路"></a>0.1 阅读README, 理解之前的开发思路</h2><p><a target="_blank" rel="noopener" href="https://github.com/inchinaxiaofeng/MarCore/tree/5b729d1146370f01a39202ad3b3900054b2a9b50">参考Commit</a></p>
+<p>当时开启这个项目, 就是为了将我的代码从一周目 OSOC 的开发地狱中解救出来.<br>非常幸运的是, 我开了一个好头.</p>
+<p>整个项目, 起码一进来的 README 还是很舒服的.<br>这个 README 详细规定了应该安装什么依赖, 如何在 Nvim 下展开开发控制.<br>更好的是, 我还规范了协作开发流程.</p>
+<p>当时, 这个项目还承担了要做 NSCSCC 比赛Chisel方案的代码库, 自然也考虑到了协作开发流程.<br>可以之后重新写一下这个README, 将这个开发流程拓展到更广泛的场景中. [TODO]<br>不过, 目前我完全没有打算这么做, 只是避免在重接管项目的一开始就进入文档地狱, 耗尽能量.</p>
+<p>更好的是, 我现在在 <code>./src/README.md</code> 中有开发规范. 十分感谢当时的自己.</p>
+<h2 id="0-2-项目结构"><a href="#0-2-项目结构" class="headerlink" title="0.2 项目结构"></a>0.2 项目结构</h2><p>项目荒废的时候, 是结构重构到一半的时候.<br>重构项目, 就是要摆脱 OSOC 一周目的屎.<br>尝试构建更有道理和逻辑的代码结构, 提高对项目的掌控力.</p>
+<p>目前的代码框架</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">./src/main/</span><br><span class="line">├── blackbox 新新架构可以保留</span><br><span class="line">│   ├── <span class="keyword">fu</span></span><br><span class="line">│   └── ip</span><br><span class="line">├── bus 新新架构可保留</span><br><span class="line">│   ├── apb</span><br><span class="line">│   ├── axi4</span><br><span class="line">│   ├── cacheBus</span><br><span class="line">│   └── debugBus</span><br><span class="line">├── config - 新架构. 这是一个纯 Scala 目录</span><br><span class="line">├── core</span><br><span class="line">│   ├── backend</span><br><span class="line">│   │   ├── <span class="keyword">fu</span></span><br><span class="line">│   │   └── unit</span><br><span class="line">│   ├── cache</span><br><span class="line">│   └── frontend</span><br><span class="line">│       ├── <span class="keyword">fu</span></span><br><span class="line">│       └── unit</span><br><span class="line">├── defs - 新架构. 新架构要保留, 看README. 新新架构放到settings下. </span><br><span class="line">├── device - 这个目录下是一些偷来的 device 代码. 新新架构保留</span><br><span class="line">│   └── vga</span><br><span class="line">├── isa 新新架构下在core类中.</span><br><span class="line">│   ├── loongarch</span><br><span class="line">│   └── riscv</span><br><span class="line">├── module 旧架构在 core 下, 新架构被独立出来, 新新架构则重新回到core下.</span><br><span class="line">│   ├── cache</span><br><span class="line">│   │   └── chiplab</span><br><span class="line">│   ├── <span class="keyword">fu</span></span><br><span class="line">│   │   ├── basis</span><br><span class="line">│   │   ├── loongarch</span><br><span class="line">│   │   └── riscv</span><br><span class="line">│   ├── ooo</span><br><span class="line">│   └── tlb</span><br><span class="line">├── settings 旧的架构. 新架构替代的目标(就不存在了), 也是新新架构中配置类的整体父类</span><br><span class="line">├── top 旧架构, 新架构还是新新架构都有的</span><br><span class="line">│   ├── chiplab</span><br><span class="line">│   ├── <span class="keyword">sta</span></span><br><span class="line">│   └── vivado</span><br><span class="line">├── units - 这个目录用于存放流水线架构中每一个流水阶段模块的地址. 但是这个目录下错误的包含了Loongarch, 而不仅仅是RISCV</span><br><span class="line">│   ├── loongarch - Remove <span class="keyword">me</span></span><br><span class="line">│   └── riscv - 修改成, 不同架构为主的.</span><br><span class="line">└── utils - 这个是OK的.</span><br><span class="line">    ├── difftest - 修改, 这个difftest仅仅是RISCV64IM的.</span><br><span class="line">    └── <span class="keyword">fu</span> - 可以用, 需要进一步读</span><br><span class="line"></span><br><span class="line"><span class="number">43</span> directories</span><br></pre></td></tr></table></figure>
+
+<p>评价:<br>当时野心很大, 想要做一个”架构分离”的设计. 但是我觉得这个是很错误的选择.<br>老话, 所有都支持, 就相当于所有都不能做好.<br>更加重要的是, <strong>Loongarch和MIPS架构都有自己特殊的, 难以做架构分离的指令.</strong><br>例如:</p>
+<ul>
+<li>Loongarch有Cache相关的控制代码, 这个意味着Cache的重新设计.</li>
+<li>MIPS 架构有分支延迟槽, 这个意味这BPU和IFU, 以及整个架构需要很大的更改.</li>
+</ul>
+<p>ISA本来就是一个抽象层, 而强行想要在此之上再抽象, 实在是一个蠢到不行的想法.<br>欠考虑了.</p>
+<p>所以需要框架调整:</p>
+<ul>
+<li>不再追求 Loongarch, MIPS 架构和 RISCV 架构的抽象, 而仅仅追求 RISCV64IM, RISCV32IM, RISCV32E 的抽象(本来手册就是这么追求的)</li>
+<li>在目录层面上, 不再追求过多的目录划分.</li>
+</ul>
+<p>进一步的架构设计:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">core</span> 负责所有与 核心相关的代码. </span><br><span class="line"><span class="attribute">device</span> 负责所有与外设与外设控制的代码</span><br><span class="line"><span class="attribute">bus</span> 负责所有总线设计的代码. 这个可能是需要考虑的. 因为bus中肯定涵盖了<span class="string">&quot;只用在core中的, cachebus, debugbus之类的与core密切相关的&quot;</span></span><br><span class="line"><span class="attribute">settings</span> 全局配置与设置相关. 分为几个部分: Config(可配置的纯Scala目录) defs(全局定义, 可以在代码中调用). 某种程度上, 新新架构对标旧架构的settings, 不过还是把settings中原本的def和config尽心了区分.</span><br><span class="line"><span class="attribute">utils</span> 工具类</span><br><span class="line"><span class="attribute">top</span> 根据对外架构进行分类, 用于包装之后进行交互.</span><br><span class="line"><span class="attribute">blackbox</span> 如题</span><br><span class="line"><span class="attribute">core</span>.isa 用来支持<span class="number">64</span>IM, <span class="number">32</span>IM和<span class="number">32</span>E的</span><br><span class="line"><span class="attribute">core</span>.units 不同微架构的阶段模块</span><br><span class="line"><span class="attribute">core</span>.module 不同微架构可以一定程度通用的模块</span><br></pre></td></tr></table></figure>
+
+<p>总体开发目标:</p>
+<ul>
+<li>建立一个支持选型拓展为M的core</li>
+<li>建立一个可以选型拓展为 RV64I, RV32I, RV32E.</li>
+<li>M为拓展(ISA中应该也是这么规定的)</li>
+<li>在过去错误的”全ISA支持”开发想法的基础上, 进行全面的拨乱反正</li>
+</ul>
+<h2 id="0-3-后续开发RoadMap-amp-Timeline"><a href="#0-3-后续开发RoadMap-amp-Timeline" class="headerlink" title="0.3 后续开发RoadMap&amp;Timeline"></a>0.3 后续开发RoadMap&amp;Timeline</h2><p>既然要“拨乱反正”，那我们就得拿出点“断舍离”的魄力来。 现在的代码库就像一个堆满了未拆封快递和旧报纸的房间，我们需要先清理，再收纳，最后才是装修。</p>
+<h3 id="Phase-1-The-Great-Purge-大清洗-T-1-Day"><a href="#Phase-1-The-Great-Purge-大清洗-T-1-Day" class="headerlink" title="Phase 1: The Great Purge (大清洗) - [T + 1 Day]"></a>Phase 1: The Great Purge (大清洗) - [T + 1 Day]</h3><p>目标: 彻底移除所有非 RISC-V 的代码。不要心疼，旧的不去新的不来。</p>
+<ul>
+<li><input disabled="" type="checkbox"> Delete LoongArch &amp; MIPS Artifacts:<ul>
+<li>移除 <code>isa/loongarch &amp; mips</code></li>
+<li>移除 <code>config/LoongArch.scala &amp; config/MIPSConfig.scala</code></li>
+<li>移除 <code>defs/LoongArchDefs.scala &amp; defs/MIPSDefs.scala</code></li>
+<li>移除 <code>module/fu/loongarch &amp; module/fu/mips (看着就头大, 删!)</code></li>
+<li>移除 <code>units/loongarch &amp; units/mips</code></li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Cleanup Top-Level:<ul>
+<li>检查 top/chiplab。虽然 ChipLab 是个好平台，但如果它强绑定 LoongArch 接口，暂时先移除或注释掉，等核稳了再加回来。</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Review Dependencies: 检查 build.mill 或 build.sbt，移除任何为了支持多架构而引入的奇怪依赖（如果有的话）。</li>
+</ul>
+<h3 id="Phase-2-The-Great-Migration-大迁徙-T-2-Days"><a href="#Phase-2-The-Great-Migration-大迁徙-T-2-Days" class="headerlink" title="Phase 2: The Great Migration (大迁徙) - [T + 2 Days]"></a>Phase 2: The Great Migration (大迁徙) - [T + 2 Days]</h3><p>目标: 收束目录结构，确立 core 的绝对核心地位。让 src/main/scala 下只保留真正的 Top-Level 概念。</p>
+<ul>
+<li><input disabled="" type="checkbox"> Move to Core:<ul>
+<li><code>isa -&gt; core/isa</code></li>
+<li><code>units -&gt; core/units</code></li>
+<li><code>module -&gt; core/module</code></li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Fix References: 这一步最痛苦, 移动文件夹后, 所有的 import 都会报错</li>
+</ul>
+<p>Tip: 使用 IDE 的 Refactor Move 功能, 或者写个脚本批量替换 <code>package isa -&gt; package core.isa</code>以及对应的 import。</p>
+<p>重点检查 Bundles 和 Config 中对这些模块的引用.</p>
+<h3 id="Phase-3-Standardization-立规矩-T-3-Days"><a href="#Phase-3-Standardization-立规矩-T-3-Days" class="headerlink" title="Phase 3: Standardization (立规矩) - [T + 3 Days]"></a>Phase 3: Standardization (立规矩) - [T + 3 Days]</h3><p>目标: 落实 settings vs config 的分治策略，确保参数化配置的逻辑闭环。</p>
+<ul>
+<li><input disabled="" type="checkbox"> Config (Pure Scala):<ul>
+<li>确保 <code>config/RISCVConfig.scala</code> 只包含 case class 和 enum</li>
+<li>定义 XLEN (32/64) 和 Extension (I/M/E) 的枚举</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Settings (Hardware Defs):<ul>
+<li>重构 <code>settings</code>. 将原本散落在 defs 中的硬件参数计算逻辑移入这里</li>
+<li>例如：根据 Config 中的 XLEN=64，在 Settings 中推导出 BussWidth=64 等硬件常量</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> Defs (Constants):<ul>
+<li>保留 <code>defs</code> 作为真正的“常量池”（OpCodes, CSR 地址等），不应该包含动态计算逻辑</li>
+</ul>
+</li>
+</ul>
+<h3 id="Phase-4-Feature-Implementation-搞建设-T-1-Week"><a href="#Phase-4-Feature-Implementation-搞建设-T-1-Week" class="headerlink" title="Phase 4: Feature Implementation (搞建设) - [T + 1 Week]"></a>Phase 4: Feature Implementation (搞建设) - [T + 1 Week]</h3><p>目标: 在干净的架构上，实现真正的 RV64I/RV32I/RV32E 选型支持。</p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>Selectable ISA Logic</code>:<ul>
+<li>在 <code>core.isa</code> 中实现一个 <code>ISADecoder trait</code>, 根据 Config 动态混入不同的解码逻辑</li>
+<li><code>RV32E</code> 主要是寄存器数量 (16 vs 32) 的区别, 在 <code>RegFile</code> 模块中加入参数化支持</li>
+</ul>
+</li>
+<li><input disabled="" type="checkbox"> <code>Difftest Adaptation</code>:<ul>
+<li>修改 <code>utils/difftest</code>. 既然现在的目标是 RISC-V 全家桶, Difftest 也要能通过配置适配 32 位和 64 位模式</li>
+<li>Task: 剥离 <code>Difftest</code> 中硬编码的 “64” 假设。</li>
+</ul>
+</li>
+</ul>
+<h2 id="0-4-自我提醒-Note-to-Self"><a href="#0-4-自我提醒-Note-to-Self" class="headerlink" title="0.4 自我提醒 (Note to Self)"></a>0.4 自我提醒 (Note to Self)</h2><p>不要回头: 既然决定砍掉多架构支持，就不要在代码里留任何 if (isLoongArch) … 的尸体。看着心烦，还容易诱发“以后万一要加回来”的这种不切实际的幻想。</p>
+<p>保持简单: core 就是 core, 不要在 core 外面搞什么 function_unit 这种看起来很厉害但实际上只会增加 import 长度的文件夹</p>
+<p>文档同步: 改完代码记得回来更新 src/README.md. 现在的 README 写得很好, 别让它变成谎言.</p>
+<h2 id="0-5-拨乱反正日记"><a href="#0-5-拨乱反正日记" class="headerlink" title="0.5 拨乱反正日记"></a>0.5 拨乱反正日记</h2><h3 id="抉择"><a href="#抉择" class="headerlink" title="抉择"></a>抉择</h3><p>第一个做出的抉择是, 我要将 Mul 和 Div 分开.<br>Mul往往只用2-4个周期, 但是Div是20-60周期. 时间非常长.<br>这样的话, 我可以避免因为Div阻塞Mul.</p>
+<p>第二个抉择是, 目前有两种打包方式:</p>
+<ul>
+<li>core.module.fu + core.units</li>
+<li>core.frontend + core.backend</li>
+</ul>
+<p>经过抉择吧, 我认为第二种更加合适. 第二种是站在系统架构师视角来看的.<br>不过, Cache是有特殊地位的.<br>Cache 的底层存储逻辑(SRAM 封装, Tag 比较逻辑, 替换算法)是通用的, 但 Cache 的控制器行为是分前端/后端的</p>
+<p>Cache 部分的最佳实践, 我认为是, 既然代码上面ICache和DCache是一样的, 那就放到core.cache中就好.<br>这样, 在其他领域需要用到Cache的时候, 我也可以直接使用Core.cache.RANDCache或者, Core.cache.LRUCache来实现.</p>
+<h2 id="1-初步的调整"><a href="#1-初步的调整" class="headerlink" title="1. 初步的调整"></a>1. 初步的调整</h2><p>date: 2026-01-24</p>
+<p>经过两天的调整, 我目前完成了Core核心代码的调整.<br>目前的大概架构如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">core</span><br><span class="line">+---frontend</span><br><span class="line">|   +---fu</span><br><span class="line">|   +---unit</span><br><span class="line">+---backend</span><br><span class="line">|   +---fu</span><br><span class="line">|   +---unit</span><br><span class="line">|   +---rf</span><br><span class="line">|   +---ooo</span><br><span class="line">+---mem</span><br><span class="line">|   +---cache</span><br><span class="line">|   +---mmu</span><br><span class="line">|   +---ram</span><br><span class="line">+---isa</span><br><span class="line">|   +---csr</span><br><span class="line">|   +---instr</span><br><span class="line">+---uarch</span><br><span class="line">|   +---fu</span><br><span class="line">|   +---branch</span><br><span class="line">|   +---interfaces</span><br></pre></td></tr></table></figure>
+
+<h3 id="感受"><a href="#感受" class="headerlink" title="感受"></a>感受</h3><p>跟着AI一起搞出来的新架构. 很难说是否合理.<br>但是总体感觉, 没有原来那么不可控了, 然后错误方向的代码也删了很多.<br>至少目前, 没有IDE报错了.</p>
+<p>跟着AI一起维护和建立架构, 发现一些很重要的感受.<br>我认为, 体会这些感受, 会提升你是用AI的体验和效率.</p>
+<p>Take away!</p>
+<ol>
+<li>在自己犹豫不决的情况下, 频繁使用AI会导致自己无法沉淀出想法.</li>
+<li>想不出来更好的东西的时候, 问问AI, 它会给你一些更好的视角.</li>
+<li>当跟AI对话过多的时候, 一定要写Blog/文档, 跟自己对话.<br>跟自己对话, 才能推动自己思考.</li>
+<li>使用AI过多, 会磨灭自己思考带来的快乐与反馈, 仿佛自己抽离了整个项目.<br>时间一长(对我而言就是半天时间), 人就会丧失动力.</li>
+<li>使用AI, 往往是”跳跃一大步”, 但是只能”反复从同一个起点跳跃.”</li>
+</ol>
+<p>还有一个感受, 就是当你决定使用一个外接键盘, 让屏幕距离自己较远时, 一定确保你的屏幕足够大. 否则会造成视觉上的痛苦!</p>
+<p>如果灯光过亮或者过暗, 使用电脑都很痛苦.</p>
+<h3 id="下一个阶段的思考"><a href="#下一个阶段的思考" class="headerlink" title="下一个阶段的思考"></a>下一个阶段的思考</h3><p>我下一个需要搞定的就是, 配置相关的内容.</p>
+<p>引入几个我跟AI探讨出来的好概念吧:</p>
+<ol>
+<li>不要使用String进行配置</li>
+<li>配置即代码, 生成即选择</li>
+</ol>
+<p>同时, 我也认为我需要明确一个目录(包)的主要职责:<br><code>top</code></p>
+<ul>
+<li>Top目录负责承接Boring出的代码.</li>
+<li>Top负责面向不同的外部环境, 来维护对外接口, 总线转发等功能.</li>
+</ul>
+<h2 id="2-完成了-Elaborate"><a href="#2-完成了-Elaborate" class="headerlink" title="2. 完成了 Elaborate"></a>2. 完成了 Elaborate</h2><p>date: 2026-01-26</p>
+<p>喜报! 完成了全部重构. 但是代价是没有Difftest和其他的东西了. 很伤心.</p>
+<p>接下来就是重新写Difftest模块. 看看新的版本会如何提高我的效率.</p>
+<p>不过有个伤心的. 就是我花了很长时间才完成这些工作.<br>其实本来可以更早完成这些东西的, 如果我状态更好一些, 昨天就可以完成了.<br>伤心.</p>
+
+        
+        <br />
+        <div id="comment-container">
+        </div>
+        <div id="disqus_thread"></div>
+        <div id="lv-container"></div>
+        <div class="giscus"></div>
+    </div>
+</div>
+
+    </div>
+</div>
+
+
+<footer class="footer">
+    <ul class="list-inline text-center">
+        
+        
+
+        
+
+        
+
+        
+        <li>
+            <a target="_blank"  href="https://github.com/inchinaxiaofeng">
+                            <span class="fa-stack fa-lg">
+                                <i class="iconfont icon-github"></i>
+                            </span>
+            </a>
+        </li>
+        
+
+        
+
+    </ul>
+    
+    <p>
+        <span id="busuanzi_container_site_pv">
+            <span id="busuanzi_value_site_pv"></span>PV
+        </span>
+        <span id="busuanzi_container_site_uv">
+            <span id="busuanzi_value_site_uv"></span>UV
+        </span>
+        Created By <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/aircloud/hexo-theme-aircloud">AirCloud</a></p>
+</footer>
+
+
+
+
+</body>
+
+<script>
+    // We expose some of the variables needed by the front end
+    window.hexo_search_path = "search.json"
+    window.hexo_root = "/"
+    window.isPost = true
+</script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="/js/index.js"></script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+</html>
